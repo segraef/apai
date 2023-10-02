@@ -1,5 +1,6 @@
 # Function to clone the runner-images repository
 function Copy-Repository {
+    [CmdletBinding(SupportsShouldProcess=$false)]
     param (
         [string]$workingDirectory
     )
@@ -10,6 +11,7 @@ function Copy-Repository {
 
 # Function to generate the specified image
 function New-Image {
+    [CmdletBinding(SupportsShouldProcess=$false)]
     param (
         [string]$workingDirectory = $pwd,
         [string]$subscriptionId,
@@ -42,6 +44,7 @@ function New-Image {
 
 # Function to create a VMSS with the specified image
 function New-VMSS {
+    [CmdletBinding(SupportsShouldProcess=$false)]
     param (
         [string]$resourceGroupName,
         [string]$resourceGroupNameImage,
@@ -77,6 +80,7 @@ function New-VMSS {
 
 # Function to update a VMSS with a new image
 function Update-VMSS {
+    [CmdletBinding(SupportsShouldProcess=$false)]
     param (
         [string]$resourceGroupName,
         [string]$resourceGroupNameImage,
