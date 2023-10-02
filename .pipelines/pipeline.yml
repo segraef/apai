@@ -1,31 +1,133 @@
-name: "Sample Pipeline"
-
 trigger:
-- main
+  - main
 
 pool:
   vmImage: ubuntu-latest
 
-jobs:
+parameters:
+  - name: subscriptionId
+    displayName: Subscription ID
+    type: string
+    default: "<subscriptionId>"
+  - name: serviceConnection
+    displayName: Service connection
+    type: string
+    default: "<serviceConnection>"
+  - name: resourceGroupName
+    displayName: Resource group name
+    type: string
+    default: "rg-apai"
+  - name: resourceGroupNameVMSS
+    displayName: Resource group name for VMSS
+    type: string
+    default: "rg-vmss"
+  - name: location
+    displayName: Location
+    type: string
+    default: "australiaeast"
+  - name: imageType
+    displayName: Image type
+    type: string
+    default: "UbuntuMinimal"
+    values:
+      - UbuntuMinimal
+      - Ubuntu2004
+      - Ubuntu2204
+      - Windows2019
+      - Windows2022
+  - name: generateImage
+    displayName: Generate Image
+    type: boolean
+    default: false
+    values:
+      - true
+      - false
+  - name: createVMSS
+    displayName: Create VMSS
+    type: boolean
+    default: false
+    values:
+      - true
+      - false
+  - name: updateVMSS
+    displayName: Update VMSS
+    type: boolean
+    default: true
+    values:
+      - true
+      - false
+  - name: debugPacker
+    displayName: Debug Packer Image Creation
+    type: boolean
+    default: false
+    values:
+      - true
+      - false
 
-  - job: Job
-    displayName: "Job"
-    steps:
+stages:
+  - stage: Image
+    displayName: Image Activities
+    jobs:
+      - job: Image
+        timeoutInMinutes: 0
 
-      - checkout: self
-        fetchDepth: 0
-        persistCredentials: true
+        steps:
+          - task: AzureCLI@2
+            displayName: Clone Repository
+            enabled: ${{ parameters.generateImage }}
+            inputs:
+              azureSubscription: ${{ parameters.serviceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                . $(Build.SourcesDirectory)/.scripts/Functions.ps1
+                Clone-Repository -workingDirectory $(Build.SourcesDirectory)
 
-      - task: Bash@3
-        displayName: "Bash"
-        inputs:
-          targetType: "inline"
-          script: |
-            echo Bash
+          - task: AzureCLI@2
+            displayName: Generate ${{ parameters.imageType }}
+            enabled: ${{ parameters.generateImage }}
+            inputs:
+              azureSubscription: ${{ parameters.serviceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              inlineScript: |
+                . $(Build.SourcesDirectory)/.scripts/Functions.ps1
+                Generate-Image `
+                  -workingDirectory $(Build.SourcesDirectory) `
+                  -subscriptionId ${{ parameters.subscriptionId }} `
+                  -resourceGroupName ${{ parameters.resourceGroupName }} `
+                  -imageType ${{ parameters.imageType }} `
+                  -location ${{ parameters.location }} `
+                  -debugPacker ${{ parameters.debugPacker }}
 
-      - task: PowerShell@2
-        displayName: "PowerShell"
-        inputs:
-          targetType: "inline"
-          script: |
-            echo PowerShell
+          - task: AzureCLI@2
+            displayName: Create VMSS in ${{ parameters.resourceGroupNameVMSS }}
+            enabled: ${{ parameters.createVMSS }}
+            inputs:
+              azureSubscription: ${{ parameters.serviceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                . $(Build.SourcesDirectory)/.scripts/Functions.ps1
+
+                Create-VMSS `
+                  -resourceGroupName ${{ parameters.resourceGroupNameVMSS }} `
+                  -resourceGroupNameImage ${{ parameters.resourceGroupName }} `
+                  -imageType ${{ parameters.imageType }} `
+                  -location ${{ parameters.location }}
+
+          - task: AzureCLI@2
+            displayName: Update VMSS in ${{ parameters.resourceGroupNameVMSS }}
+            enabled: ${{ parameters.updateVMSS }}
+            inputs:
+              azureSubscription: ${{ parameters.serviceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                . $(Build.SourcesDirectory)/.scripts/Functions.ps1
+
+                Update-VMSS `
+                  -resourceGroupName ${{ parameters.resourceGroupNameVMSS }} `
+                  -resourceGroupNameImage ${{ parameters.resourceGroupName }} `
+                  -imageType ${{ parameters.imageType }}
