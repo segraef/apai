@@ -40,19 +40,19 @@ jobs:
         if: matrix.generateImage == 'true'
         run: |
           ./.scripts/functions.ps1
-          Clone-Repository -workingDirectory ${{ github.workspace }}
+          Copy-Repository -workingDirectory ${{ github.workspace }}
 
       - name: Generate Image
         if: matrix.generateImage == 'true'
         run: |
           ./.scripts/functions.ps1
-          Generate-Image -workingDirectory ${{ github.workspace }} -subscriptionId ${{ secrets.SUBSCRIPTION_ID }} -tenantId ${{ secrets.TENANT_ID }} -servicePrincipalId ${{ secrets.servicePrincipalId }} -servicePrincipalKey ${{ secrets.servicePrincipalKey }} -resourceGroupName ${{ secrets.RESOURCE_GROUP_NAME }} -imageType ${{ secrets.IMAGE_TYPE }} -location ${{ secrets.LOCATION }} -debugPacker ${{ secrets.DEBUG_PACKER }}
+          New-Image -workingDirectory ${{ github.workspace }} -subscriptionId ${{ secrets.SUBSCRIPTION_ID }} -tenantId ${{ secrets.TENANT_ID }} -servicePrincipalId ${{ secrets.servicePrincipalId }} -servicePrincipalKey ${{ secrets.servicePrincipalKey }} -resourceGroupName ${{ secrets.RESOURCE_GROUP_NAME }} -imageType ${{ secrets.IMAGE_TYPE }} -location ${{ secrets.LOCATION }} -debugPacker ${{ secrets.DEBUG_PACKER }}
 
       - name: Create VMSS
         if: matrix.createVMSS == 'true'
         run: |
           ./.scripts/functions.ps1
-          Create-VMSS -resourceGroupName ${{ secrets.RESOURCE_GROUP_NAME_VMSS }} -imageType ${{ secrets.IMAGE_TYPE }} -location ${{ secrets.LOCATION }}
+          New-VMSS -resourceGroupName ${{ secrets.RESOURCE_GROUP_NAME_VMSS }} -imageType ${{ secrets.IMAGE_TYPE }} -location ${{ secrets.LOCATION }}
 
       - name: Update VMSS
         if: matrix.updateVMSS == 'true'

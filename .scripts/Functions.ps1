@@ -1,5 +1,5 @@
 # Function to clone the runner-images repository
-function Clone-Repository {
+function Copy-Repository {
     param (
         [string]$workingDirectory
     )
@@ -9,7 +9,7 @@ function Clone-Repository {
 }
 
 # Function to generate the specified image
-function Generate-Image {
+function New-Image {
     param (
         [string]$workingDirectory = $pwd,
         [string]$subscriptionId,
@@ -29,7 +29,7 @@ function Generate-Image {
     if ($debugPacker -eq 'true') {
         $env:PACKER_LOG = 1
     }
-    $result = GenerateResourcesAndImage `
+    GenerateResourcesAndImage `
         -SubscriptionId $subscriptionId `
         -ResourceGroupName $resourceGroupName `
         -ImageType $imageType `
@@ -41,7 +41,7 @@ function Generate-Image {
 }
 
 # Function to create a VMSS with the specified image
-function Create-VMSS {
+function New-VMSS {
     param (
         [string]$resourceGroupName,
         [string]$resourceGroupNameImage,
