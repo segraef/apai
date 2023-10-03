@@ -10,7 +10,7 @@ function Copy-Repository {
 }
 
 # Function to generate the specified image
-function New-Image {
+function Edit-Image {
     [CmdletBinding(SupportsShouldProcess=$false)]
     param (
         [string]$workingDirectory = $pwd,
@@ -79,7 +79,7 @@ function New-VMSS {
 }
 
 # Function to update a VMSS with a new image
-function Update-VMSS {
+function Edit-VMSS {
     [CmdletBinding(ConfirmImpact='None')]
     param (
         [string]$resourceGroupName,
