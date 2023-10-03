@@ -43,7 +43,7 @@ function Edit-Image {
 }
 
 # Function to create a VMSS with the specified image
-function New-VMSS {
+function Add-VMSS {
     [CmdletBinding(ConfirmImpact='None')]
     param (
         [string]$resourceGroupName,
