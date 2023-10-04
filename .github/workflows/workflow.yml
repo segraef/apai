@@ -79,7 +79,7 @@ jobs:
             Add-Image -workingDirectory $env:GITHUB_WORKSPACE `
               -subscriptionId $credentials.subscriptionId `
               -tenantId $credentials.tenantId `
-              -servicePrincipalId $credentials.clienttId `
+              -servicePrincipalId $credentials.clientId `
               -servicePrincipalKey $credentials.clientSecret `
               -resourceGroupName ${{ inputs.resourceGroupName }} `
               -imageType ${{ inputs.imageType }} `
