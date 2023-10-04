@@ -1,37 +1,30 @@
-# Template
-
-This repository serves as a **Default Template Repository** according official [GitHub Contributing Guidelines][ProjectSetup] for healthy contributions. It brings you clean default Templates for several areas:
-
-- [Azure DevOps Pull Requests](.azuredevops/PULL_REQUEST_TEMPLATE.md) ([`.azuredevops\PULL_REQUEST_TEMPLATE.md`](`.azuredevops\PULL_REQUEST_TEMPLATE.md`))
-- [Azure Pipelines](.pipelines/pipeline.yml) ([`.pipelines/pipeline.yml`](`.pipelines/pipeline.yml`))
-- [GitHub Workflows](.github/workflows/)
-  - [Super Linter](.github/workflows/linter.yml) ([`.github/workflows/linter.yml`](`.github/workflows/linter.yml`))
-  - [Sample Workflows](.github/workflows/workflow.yml) ([`.github/workflows/workflow.yml`](`.github/workflows/workflow.yml`))
-- [GitHub Pull Requests](.github/PULL_REQUEST_TEMPLATE.md) ([`.github/PULL_REQUEST_TEMPLATE.md`](`.github/PULL_REQUEST_TEMPLATE.md`))
-- [GitHub Issues](.github/ISSUE_TEMPLATE/)
-  - [Feature Requests](.github/ISSUE_TEMPLATE/FEATURE_REQUEST.md) ([`.github/ISSUE_TEMPLATE/FEATURE_REQUEST.md`](`.github/ISSUE_TEMPLATE/FEATURE_REQUEST.md`))
-  - [Bug Reports](.github/ISSUE_TEMPLATE/BUG_REPORT.md) ([`.github/ISSUE_TEMPLATE/BUG_REPORT.md`](`.github/ISSUE_TEMPLATE/BUG_REPORT.md`))
-- [Codeowners](.github/CODEOWNERS) ([`.github/CODEOWNERS`](`.github/CODEOWNERS`)) _adjust usernames once cloned_
-- [Wiki and Documentation](docs/) ([`docs/`](`docs/`))
-- [gitignore](.gitignore) ([`.gitignore`](.gitignore))
-- [gitattributes](.gitattributes) ([`.gitattributes`](.gitattributes))
-- [Changelog](CHANGELOG.md) ([`CHANGELOG.md`](`CHANGELOG.md`))
-- [Code of Conduct](CODE_OF_CONDUCT.md) ([`CODE_OF_CONDUCT.md`](`CODE_OF_CONDUCT.md`))
-- [Contribution](CONTRIBUTING.md) ([`CONTRIBUTING.md`](`CONTRIBUTING.md`))
-- [License](LICENSE) ([`LICENSE`](`LICENSE`)) _adjust projectname once cloned_
-- [Readme](README.md) ([`README.md`](`README.md`))
-- [Security](SECURITY.md) ([`SECURITY.md`](`SECURITY.md`))
-
+# Azure Pipelines Agent Images and GitHub Actions Runner Images
 
 ## Status
 
-[![Super Linter](<https://github.com/segraef/Template/actions/workflows/linter.yml/badge.svg>)](<https://github.com/segraef/Template/actions/workflows/linter.yml>)
+[![Super Linter](<https://github.com/segraef/apai/actions/workflows/linter.yml/badge.svg>)](<https://github.com/segraef/apai/actions/workflows/linter.yml>)
 
-[![Sample Workflow](<https://github.com/segraef/Template/actions/workflows/workflow.yml/badge.svg>)](<https://github.com/segraef/Template/actions/workflows/workflow.yml>)
+[![GitHub Runner Image Workflow](<https://github.com/segraef/apai/actions/workflows/workflow.yml/badge.svg>)](<https://github.com/segraef/apai/actions/workflows/workflow.yml>)
 
-## Creating a repository from a template
+## About
 
-You can [generate](https://github.com/segraef/Template/generate) a new repository with the same directory structure and files as an existing repository. More details can be found [here][CreateFromTemplate].
+This repository contains a simplified version of pre-defined Azure Pipelines and GitHub Workflows used to create VM images for [GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners) used for Actions, as well as for [Microsoft-hosted agents](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops#use-a-microsoft-hosted-agent) used for Azure Pipelines.
+
+## Available Images
+
+| Image | Pipeline/Workflow Label | Included Software |
+| --------------------|---------------------|--------------------|
+| Ubuntu 22.04 | `Ubuntu2204` | [ubuntu-22.04]
+| Ubuntu 20.04 | `Ubuntu2004` | [ubuntu-20.04]
+| Ubuntu Minimal | `UbuntuMinimal` |
+| Windows Server 2022 | `Windows2022` | [windows-2022]
+| Windows Server 2019 | `Windows2019` | [windows-2019]
+
+[ubuntu-minimal]: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
+[ubuntu-22.04]: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
+[ubuntu-20.04]: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md
+[windows-2022]: https://github.com/actions/runner-images/blob/main/images/win/Windows2022-Readme.md
+[windows-2019]: https://github.com/actions/runner-images/blob/main/images/win/Windows2019-Readme.md
 
 ## Reporting Issues and Feedback
 
