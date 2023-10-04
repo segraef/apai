@@ -1,25 +1,101 @@
-name: "Sample Workflow"
+name: GitHub Runner Image
 on:
   workflow_dispatch:
     inputs:
-      name:
-        description: 'Person to greet'
+      resourceGroupName:
+        description: 'Resource group name'
         required: true
-        default: 'You'
-      home:
-        description: 'location'
-        required: false
-        default: 'The Universe'
-
+        default: 'rg-apai'
+      resourceGroupNameVMSS:
+        description: 'Resource group name for VMSS'
+        required: true
+        default: 'rg-vmss'
+      location:
+        description: 'Location'
+        required: true
+        default: 'australiaeast'
+      imageType:
+        description: 'Image type'
+        required: true
+        default: 'UbuntuMinimal'
+        type: choice
+        options:
+          - 'UbuntuMinimal'
+          - 'Ubuntu2004'
+          - 'Ubuntu2204'
+          - 'Windows2019'
+          - 'Windows2022'
+      generateImage:
+        description: 'Generate Image'
+        required: true
+        default: false
+        type: boolean
+      createVMSS:
+        description: 'Create VMSS'
+        required: true
+        default: false
+        type: boolean
+      updateVMSS:
+        description: 'Update VMSS'
+        required: true
+        default: true
+        type: boolean
+      debugPacker:
+        description: 'Debug Packer Image Creation'
+        required: true
+        default: false
+        type: boolean
 jobs:
-  job:
-    name: "Job"
+  image:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Check out
         uses: actions/checkout@v2
-      - name: Hello
-        shell: pwsh
-        run: |
-          echo "Hello ${{ github.event.inputs.name }}!"
-          echo "- in ${{ github.event.inputs.home }}!"
+
+      - name: Set up Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          enable-AzPSSession: true
+
+      - name: Clone Repository
+        uses: azure/powershell@v1
+        with:
+          azPSVersion: 'latest'
+          inlineScript: |
+            . (Join-Path $env:GITHUB_WORKSPACE '.scripts' 'Functions.ps1')
+            Copy-Repository -workingDirectory $env:GITHUB_WORKSPACE
+
+      - name: Generate Image
+        uses: azure/powershell@v1
+        with:
+          azPSVersion: 'latest'
+          inlineScript: |
+            $credentials = ${{ secrets.AZURE_CREDENTIALS }} | ConvertFrom-Json
+            . (Join-Path $env:GITHUB_WORKSPACE '.scripts' 'Functions.ps1')
+            Add-Image -workingDirectory $env:GITHUB_WORKSPACE `
+              -subscriptionId $credentials.subscriptionId `
+              -tenantId $credentials.tenantId `
+              -servicePrincipalId $credentials.clienttId `
+              -servicePrincipalKey $credentials.clientSecret `
+              -resourceGroupName ${{ inputs.resourceGroupName }} `
+              -imageType ${{ inputs.imageType }} `
+              -location ${{ inputs.location }} `
+              -debugPacker ${{ inputs.debugPacker }}
+
+      - name: Create VMSS
+        uses: azure/powershell@v1
+        with:
+          azPSVersion: 'latest'
+          inlineScript: |
+            . (Join-Path $env:GITHUB_WORKSPACE '.scripts' 'Functions.ps1')
+            Add-VMSS -resourceGroupName ${{ inputs.resourceGroupNameVMSS }} -imageType ${{ inputs.imageType }} -location ${{ inputs.location }}
+
+      - name: Update VMSS
+        uses: azure/powershell@v1
+        with:
+          azPSVersion: 'latest'
+          inlineScript: |
+            . (Join-Path $env:GITHUB_WORKSPACE '.scripts' 'Functions.ps1')
+            Edit-VMSS -resourceGroupNameVMSS ${{ inputs.resourceGroupNameVMSS }} -imageType ${{ inputs.imageType }}
