@@ -65,7 +65,7 @@ jobs:
           azPSVersion: 'latest'
           inlineScript: |
             . (Join-Path $env:GITHUB_WORKSPACE '.scripts' 'Functions.ps1')
-            Copy-Repository -workingDirectory ${{ github.workspace }}
+            Copy-Repository -workingDirectory $env:GITHUB_WORKSPACE
 
       - name: Generate Image
         uses: azure/powershell@v1
@@ -74,7 +74,7 @@ jobs:
           inlineScript: |
             $credentials = ${{ secrets.AZURE_CREDENTIALS }} | ConvertFrom-Json
             . (Join-Path $env:GITHUB_WORKSPACE '.scripts' 'Functions.ps1')
-            Add-Image -workingDirectory ${{ github.workspace }} `
+            Add-Image -workingDirectory $env:GITHUB_WORKSPACE `
               -subscriptionId $credentials.subscriptionId `
               -tenantId $credentials.tenantId `
               -servicePrincipalId $credentials.clienttId `
