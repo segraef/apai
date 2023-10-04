@@ -1,17 +1,50 @@
-name: Azure Actions
 
 on:
   workflow_dispatch:
     inputs:
-      name:
-        description: 'Person to greet'
+      resourceGroupName:
+        description: 'Resource group name'
         required: true
-        default: 'You'
-      home:
-        description: 'location'
-        required: false
-        default: 'The Universe'
-
+        default: 'rg-apai'
+      resourceGroupNameVMSS:
+        description: 'Resource group name for VMSS'
+        required: true
+        default: 'rg-vmss'
+      location:
+        description: 'Location'
+        required: true
+        default: 'australiaeast'
+      imageType:
+        description: 'Image type'
+        required: true
+        default: 'UbuntuMinimal'
+        type: choice
+        options:
+          - 'UbuntuMinimal'
+          - 'Ubuntu2004'
+          - 'Ubuntu2204'
+          - 'Windows2019'
+          - 'Windows2022'
+      generateImage:
+        description: 'Generate Image'
+        required: true
+        default: false
+        type: boolean
+      createVMSS:
+        description: 'Create VMSS'
+        required: true
+        default: false
+        type: boolean
+      updateVMSS:
+        description: 'Update VMSS'
+        required: true
+        default: true
+        type: boolean
+      debugPacker:
+        description: 'Debug Packer Image Creation'
+        required: true
+        default: false
+        type: boolean
 jobs:
   image:
     runs-on: ubuntu-latest
@@ -22,13 +55,7 @@ jobs:
         updateVMSS: [true, false]
 
     steps:
-      - name: Hello
-        shell: pwsh
-        run: |
-          echo "Hello ${{ github.event.inputs.name }}!"
-          echo "- in ${{ github.event.inputs.home }}!"
-
-      - name: Check out code
+      - name: Check out
         uses: actions/checkout@v2
 
       - name: Set up Azure CLI
@@ -45,17 +72,26 @@ jobs:
       - name: Generate Image
         if: matrix.generateImage == 'true'
         run: |
+          $creds = ${{ secrets.AZURE_CREDENTIALS }} | ConvertFrom-Json
           ./.scripts/functions.ps1
-          New-Image -workingDirectory ${{ github.workspace }} -subscriptionId ${{ secrets.SUBSCRIPTION_ID }} -tenantId ${{ secrets.TENANT_ID }} -servicePrincipalId ${{ secrets.servicePrincipalId }} -servicePrincipalKey ${{ secrets.servicePrincipalKey }} -resourceGroupName ${{ secrets.RESOURCE_GROUP_NAME }} -imageType ${{ secrets.IMAGE_TYPE }} -location ${{ secrets.LOCATION }} -debugPacker ${{ secrets.DEBUG_PACKER }}
+          New-Image -workingDirectory ${{ github.workspace }} `
+            -subscriptionId $creds.subscriptionId `
+            -tenantId $creds.tenantId `
+            -servicePrincipalId $creds.clienttId `
+            -servicePrincipalKey $creds.clientSecret `
+            -resourceGroupName ${{ inputs.resourceGroupName }} `
+            -imageType ${{ inputs.imageType }} `
+            -location ${{ inputs.location }} `
+            -debugPacker ${{ inputs.debugPacker }}
 
       - name: Create VMSS
         if: matrix.createVMSS == 'true'
         run: |
           ./.scripts/functions.ps1
-          New-VMSS -resourceGroupName ${{ secrets.RESOURCE_GROUP_NAME_VMSS }} -imageType ${{ secrets.IMAGE_TYPE }} -location ${{ secrets.LOCATION }}
+          New-VMSS -resourceGroupName ${{ inputs.resourceGroupNameVMSS }} -imageType ${{ inputs.imageType }} -location ${{ inputs.location }}
 
       - name: Update VMSS
         if: matrix.updateVMSS == 'true'
         run: |
           ./.scripts/functions.ps1
-          Update-VMSS -resourceGroupNameVMSS ${{ secrets.RESOURCE_GROUP_NAME_VMSS }} -imageType ${{ secrets.IMAGE_TYPE }}
+          Update-VMSS -resourceGroupNameVMSS ${{ inputs.resourceGroupNameVMSS }} -imageType ${{ inputs.imageType }}

@@ -10,7 +10,7 @@ function Copy-Repository {
 }
 
 # Function to generate the specified image
-function Edit-Image {
+function Add-Image {
     [CmdletBinding(SupportsShouldProcess=$false)]
     param (
         [string]$workingDirectory = $pwd,

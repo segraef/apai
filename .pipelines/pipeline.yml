@@ -81,7 +81,7 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 . $(Build.SourcesDirectory)/.scripts/Functions.ps1
-                Clone-Repository -workingDirectory $(Build.SourcesDirectory)
+                Copy-Repository -workingDirectory $(Build.SourcesDirectory)
 
           - task: AzureCLI@2
             displayName: Generate ${{ parameters.imageType }}
@@ -93,7 +93,7 @@ stages:
               addSpnToEnvironment: true
               inlineScript: |
                 . $(Build.SourcesDirectory)/.scripts/Functions.ps1
-                Generate-Image `
+                Add-Image `
                   -workingDirectory $(Build.SourcesDirectory) `
                   -subscriptionId ${{ parameters.subscriptionId }} `
                   -resourceGroupName ${{ parameters.resourceGroupName }} `
@@ -111,7 +111,7 @@ stages:
               inlineScript: |
                 . $(Build.SourcesDirectory)/.scripts/Functions.ps1
 
-                Create-VMSS `
+                Add-VMSS `
                   -resourceGroupName ${{ parameters.resourceGroupNameVMSS }} `
                   -resourceGroupNameImage ${{ parameters.resourceGroupName }} `
                   -imageType ${{ parameters.imageType }} `
@@ -127,7 +127,7 @@ stages:
               inlineScript: |
                 . $(Build.SourcesDirectory)/.scripts/Functions.ps1
 
-                Update-VMSS `
+                Edit-VMSS `
                   -resourceGroupName ${{ parameters.resourceGroupNameVMSS }} `
                   -resourceGroupNameImage ${{ parameters.resourceGroupName }} `
                   -imageType ${{ parameters.imageType }}
