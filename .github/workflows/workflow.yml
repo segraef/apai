@@ -68,6 +68,7 @@ jobs:
             Copy-Repository -workingDirectory $env:GITHUB_WORKSPACE
 
       - name: Generate Image
+        if: ${{ inputs.generateImage }}
         uses: azure/powershell@v1
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
@@ -87,6 +88,7 @@ jobs:
               -debugPacker ${{ inputs.debugPacker }}
 
       - name: Create VMSS
+        if: ${{ inputs.createVMSS }}
         uses: azure/powershell@v1
         with:
           azPSVersion: 'latest'
@@ -95,9 +97,10 @@ jobs:
             Add-VMSS -resourceGroupName ${{ inputs.resourceGroupNameVMSS }} -imageType ${{ inputs.imageType }} -location ${{ inputs.location }}
 
       - name: Update VMSS
+        if: ${{ inputs.updateVMSS }}
         uses: azure/powershell@v1
         with:
           azPSVersion: 'latest'
           inlineScript: |
             . (Join-Path $env:GITHUB_WORKSPACE '.scripts' 'Functions.ps1')
-            Edit-VMSS -resourceGroupNameVMSS ${{ inputs.resourceGroupNameVMSS }} -imageType ${{ inputs.imageType }}
+            Edit-VMSS -resourceGroupName ${{ inputs.resourceGroupNameVMSS }} -imageType ${{ inputs.imageType }}
