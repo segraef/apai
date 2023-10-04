@@ -6,9 +6,11 @@
 
 [![GitHub Runner Image Workflow](<https://github.com/segraef/apai/actions/workflows/workflow.yml/badge.svg>)](<https://github.com/segraef/apai/actions/workflows/workflow.yml>)
 
+[![Azure Pipelines Agent Image Pipeline](https://dev.azure.com/segraef/apai/_apis/build/status%2Fapai?branchName=main)](https://dev.azure.com/segraef/apai/_build/latest?definitionId=41)
+
 ## About
 
-This repository contains a simplified version of pre-defined Azure Pipelines and GitHub Workflows used to create VM images for [GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners) used for Actions, as well as for [Microsoft-hosted agents](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops#use-a-microsoft-hosted-agent) used for Azure Pipelines.
+This repository contains simplified versions of Azure Pipelines, GitHub Workflows and local PowerShell Functions script to create your own Azure Pipelines Agent Images and GitHub Actions Runner Images based on the official [source code](https://github.com/actions/runner-images/) used for [GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners) used for Actions, as well as for [Microsoft-hosted agents](https://docs.microsoft.c
 
 ## Available Images
 
