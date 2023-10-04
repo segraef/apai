@@ -1,7 +1,6 @@
 name: Azure Pipelines Agent Image
 
-trigger:
-  - main
+trigger: notrigger
 
 pool:
   vmImage: ubuntu-latest
