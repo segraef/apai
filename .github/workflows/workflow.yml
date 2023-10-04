@@ -48,11 +48,6 @@ on:
 jobs:
   image:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        generateImage: [true, false]
-        createVMSS: [true, false]
-        updateVMSS: [true, false]
 
     steps:
       - name: Check out
@@ -62,19 +57,18 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+          enable-AzPSSession: true
 
       - name: Clone Repository
-        if: matrix.generateImage == 'true'
         run: |
           ./.scripts/functions.ps1
           Copy-Repository -workingDirectory ${{ github.workspace }}
 
       - name: Generate Image
-        if: matrix.generateImage == 'true'
         run: |
           $creds = ${{ secrets.AZURE_CREDENTIALS }} | ConvertFrom-Json
           ./.scripts/functions.ps1
-          New-Image -workingDirectory ${{ github.workspace }} `
+          Add-Image -workingDirectory ${{ github.workspace }} `
             -subscriptionId $creds.subscriptionId `
             -tenantId $creds.tenantId `
             -servicePrincipalId $creds.clienttId `
@@ -85,13 +79,11 @@ jobs:
             -debugPacker ${{ inputs.debugPacker }}
 
       - name: Create VMSS
-        if: matrix.createVMSS == 'true'
         run: |
           ./.scripts/functions.ps1
-          New-VMSS -resourceGroupName ${{ inputs.resourceGroupNameVMSS }} -imageType ${{ inputs.imageType }} -location ${{ inputs.location }}
+          Add-VMSS -resourceGroupName ${{ inputs.resourceGroupNameVMSS }} -imageType ${{ inputs.imageType }} -location ${{ inputs.location }}
 
       - name: Update VMSS
-        if: matrix.updateVMSS == 'true'
         run: |
           ./.scripts/functions.ps1
-          Update-VMSS -resourceGroupNameVMSS ${{ inputs.resourceGroupNameVMSS }} -imageType ${{ inputs.imageType }}
+          Edit-VMSS -resourceGroupNameVMSS ${{ inputs.resourceGroupNameVMSS }} -imageType ${{ inputs.imageType }}
