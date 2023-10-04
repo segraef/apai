@@ -1,3 +1,5 @@
+name: Azure Pipelines Agent Image
+
 trigger:
   - main
 
