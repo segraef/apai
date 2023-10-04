@@ -6,11 +6,11 @@
 
 [![GitHub Runner Image Workflow](<https://github.com/segraef/apai/actions/workflows/workflow.yml/badge.svg>)](<https://github.com/segraef/apai/actions/workflows/workflow.yml>)
 
-[![Azure Pipelines Agent Image Pipeline](https://dev.azure.com/segraef/apai/_apis/build/status%2Fapai?branchName=main)](https://dev.azure.com/segraef/apai/_build/latest?definitionId=41)
+[![Azure Pipelines Agent Image Pipeline](https://dev.azure.com/segraef/apai/_apis/build/status%2Fapai?branchName=main)](https://dev.azure.com/segraef/apai/_build/latest?definitionId=42)
 
 ## About
 
-This repository contains simplified versions of Azure Pipelines, GitHub Workflows and local PowerShell Functions script to create your own Azure Pipelines Agent Images and GitHub Actions Runner Images based on the official [source code](https://github.com/actions/runner-images/) used for [GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners) used for Actions, as well as for [Microsoft-hosted agents](https://docs.microsoft.c
+This repository contains simplified versions of Azure Pipelines, GitHub Workflows and local PowerShell Functions script to create your own Azure Pipelines Agent Images and GitHub Actions Runner Images based on the official [source code](https://github.com/actions/runner-images/) used for [GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners) used for Actions, as well as for [Microsoft-hosted agents](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops#use-a-microsoft-hosted-agent) used for Azure Pipelines.
 
 ## Available Images
 
@@ -27,6 +27,48 @@ This repository contains simplified versions of Azure Pipelines, GitHub Workflow
 [ubuntu-20.04]: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md
 [windows-2022]: https://github.com/actions/runner-images/blob/main/images/win/Windows2022-Readme.md
 [windows-2019]: https://github.com/actions/runner-images/blob/main/images/win/Windows2019-Readme.md
+
+> **Note:** The `Pipeline/Workflow` labels can be used in your Pipeline/Workflow to select the image you want to create.
+
+## Getting Started
+
+### Prerequisites
+
+* [Azure Account](https://azure.microsoft.com/en-us/free/)
+* [Azure DevOps Account](https://azure.microsoft.com/en-us/services/devops/)
+  * [Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml)
+* [GitHub Account](https://github.com/)
+  * [Azure Service Principal](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux#use-the-azure-login-action-with-a-service-principal-secret)
+
+### Create Images
+
+#### Create VM images using Azure Pipelines
+
+1. Clone this repository.
+2. Create a new Azure Pipeline using the `/.pipelines/pipeline.yml` file.
+3. Create the service connection to your Azure Subscription.
+4. Run the pipeline.
+
+#### Create VM images using GitHub Workflows
+
+1. Clone this repository.
+2. [Create a service principal](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux#use-the-azure-login-action-with-a-service-principal-secret) assigned with the Contributor role to your Azure Subscription.
+3. Create the GitHub Actions repository secret `AZURE_CREDENTIALS` with the output data from the previously created service principal. Which looks like this:
+    ```json
+    {
+        "clientId": "<clientId>",
+        "clientSecret": "<clientSecret>",
+        "subscriptionId": "<subscriptionId>",
+        "tenantId": "<subscriptionId>",
+        "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+        "resourceManagerEndpointUrl": "https://management.azure.com/",
+        "activeDirectoryGraphResourceId": "https://graph.windows.net/",
+        "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+        "galleryEndpointUrl": "https://gallery.azure.com/",
+        "managementEndpointUrl": "https://management.core.windows.net/"
+    }
+    ```
+4. Run the GitHub Runner Image workflow (`/.github/workflows/workflow.yml`).
 
 ## Reporting Issues and Feedback
 
