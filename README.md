@@ -10,7 +10,7 @@
 
 ## About
 
-This repository contains simplified versions of Azure Pipelines, GitHub Workflows and local PowerShell Functions script to create VM images for [GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners) used for Actions, as well as for [Microsoft-hosted agents](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops#use-a-microsoft-hosted-agent) used for Azure Pipelines.
+This repository contains simplified versions of Azure Pipelines, GitHub Workflows and local PowerShell Functions script to create your own Azure Pipelines Agent Images and GitHub Actions Runner Images based on the official [source code](https://github.com/actions/runner-images/) used for [GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners) used for Actions, as well as for [Microsoft-hosted agents](https://docs.microsoft.c
 
 ## Available Images
 
